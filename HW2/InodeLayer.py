@@ -46,6 +46,9 @@ class InodeLayer():
     def read(self, inode, offset, length): 
         '''WRITE   YOUR CODE HERE '''
 
+    #IMPLEMENTS THE READ FUNCTION 
+    def copy(self, inode): 
+        '''WRITE   YOUR CODE HERE '''
 
     def status(self):
         print(MemoryInterface.status())

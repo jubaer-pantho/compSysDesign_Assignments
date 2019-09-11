@@ -112,8 +112,13 @@ class Operations():
 				string += "\t\t[" + str(inode_number + j) + "  :  "  + str(bool(b[j])) + "]  \n"
 			inode_number += len(b)
 		'''
+		counter = 0
 		string += "\n----------DATA Blocks: ----------\n"
 		for i in range(sblock.DATA_BLOCKS_OFFSET, sblock.TOTAL_NO_OF_BLOCKS):
+			if counter > 20: 
+				print("Showing only 10 data blocks")
+				break
+			counter += 1
 			string += (str(i) + " : " + "".join(sblock.ADDR_DATA_BLOCKS[i - sblock.DATA_BLOCKS_OFFSET].block)) + "  "
 
 		'''
