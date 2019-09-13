@@ -170,7 +170,14 @@ class InodeLayer():
     def copy(self, inode): 
         '''WRITE   YOUR CODE HERE '''
         newInodeObj = test.new_inode(0)
-        newInodeObj.blk_numbers = inode.blk_numbers
+        for i in range(0, len(inode.blk_numbers)):
+            if (inode.blk_numbers[i] == -1):
+                break
+            data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[i])
+            valid_block_number = interface.get_valid_data_block()
+            interface.update_data_block(valid_block_number, data_read)
+            newInodeObj.blk_numbers[i] = valid_block_number
+
         newInodeObj.time_modified = str(datetime.datetime.now())[:19]
         newInodeObj.time_accessed = inode.time_accessed = str(datetime.datetime.now())[:19]
         newInodeObj.size = inode.size
@@ -208,6 +215,9 @@ if __name__ == "__main__":
     test.printAttr(inodeObj)
     _ , data_read = test.read(inodeObj, 2, 6)
 
+    copyObj = test.copy(inodeObj)
+
+    test.printAttr(copyObj)
     print(data_read)
 
     test.status()
