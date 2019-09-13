@@ -119,7 +119,7 @@ class InodeLayer():
 
         inode.time_accessed = str(datetime.datetime.now())[:19]
         inode.time_modified = str(datetime.datetime.now())[:19]
-
+        return inode
 
 
     #IMPLEMENTS THE READ FUNCTION 
@@ -130,9 +130,54 @@ class InodeLayer():
             print("\nInode is a directory: Operation not Permitted\n")
             return -1
 
+        block_data = self.INODE_TO_BLOCK(inode, offset)
+        file_index = offset / config.BLOCK_SIZE
+        block_index = offset % config.BLOCK_SIZE
+
+        if (block_data == '' or inode.blk_numbers[file_index] == -1):
+                print("\noffset is out of bound: Operation not Permitted\n")
+                return -1
+
+        data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index])
+        file_index += 1
+        data_array = []
+
+        x = config.BLOCK_SIZE - block_index
+
+        if x > length:
+            x = block_index + length
+            length = 0
+        else:
+            length = length - x
+            x = config.BLOCK_SIZE
+
+        data_array.append(data_read[block_index:x])
+
+        while(length):
+            file_index += 1
+            x = length if config.BLOCK_SIZE > length else config.BLOCK_SIZE
+            
+            data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index])
+            data_array.append(data_read[:x])
+            length -= x
+
+        inode.time_accessed = str(datetime.datetime.now())[:19]
+        #print("".join(data_array))
+        return inode, "".join(data_array)
+
+
     #IMPLEMENTS THE READ FUNCTION 
     def copy(self, inode): 
         '''WRITE   YOUR CODE HERE '''
+        newInodeObj = test.new_inode(0)
+        newInodeObj.blk_numbers = inode.blk_numbers
+        newInodeObj.time_modified = str(datetime.datetime.now())[:19]
+        newInodeObj.time_accessed = inode.time_accessed = str(datetime.datetime.now())[:19]
+        newInodeObj.size = inode.size
+        newInodeObj.links = inode.links
+
+        return newInodeObj
+
 
     def status(self):
         print(MemoryInterface.status())
@@ -155,14 +200,14 @@ if __name__ == "__main__":
     dirInodeObj =  test.new_inode(1)
     test.printAttr(inodeObj)
     time.sleep(2)
-    test.write(inodeObj, 0, "Hello World")
+    inodeObj = test.write(inodeObj, 0, "Hello World")
     test.printAttr(inodeObj)
 
     time.sleep(2)
-    test.write(inodeObj, 12, "! This is great")
+    inodeObj = test.write(inodeObj, 12, "! This is great")
     test.printAttr(inodeObj)
+    _ , data_read = test.read(inodeObj, 2, 6)
 
+    print(data_read)
 
-
- #   test.write(dirInodeObj, 100, "Hello")
     test.status()
