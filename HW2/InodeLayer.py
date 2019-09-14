@@ -47,6 +47,9 @@ class InodeLayer():
                 flag = 1
                 valid_block_number = interface.get_valid_data_block()
                 interface.update_data_block(valid_block_number, data_array[i])
+                if (index >= len(inode.blk_numbers)):
+                    print("\nWrite size too big: Operation not Permitted\n")
+                    return
                 inode.blk_numbers[index] = valid_block_number
                 inode.size += 1
                 index += 1
@@ -97,7 +100,6 @@ class InodeLayer():
     #IMPLEMENTS THE READ FUNCTION 
     def read(self, inode, offset, length): 
         '''WRITE   YOUR CODE HERE '''
-        print("Reading data from the inode data block")
         if inode.type == 1:
             print("\nInode is a directory: Operation not Permitted\n")
             return -1
