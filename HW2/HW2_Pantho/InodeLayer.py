@@ -36,7 +36,6 @@ class InodeLayer():
             interface.free_data_block(inode.blk_numbers[i])
             inode.blk_numbers[i] = -1
 
-    # helper function to write data to the blocks
     def __write_to_filesystem_offset(self, inode, offset, data_array):
         flag = 0
         index = offset / config.BLOCK_SIZE
@@ -62,8 +61,6 @@ class InodeLayer():
             print("\nInode is a directory: Operation not Permitted\n")
             return -1
 
-        # the if condition will be only executed if the file size is 0
-        # for the first time
         if inode.size == 0 and offset == 0:
             print("Initial write to the inode block")
 
@@ -115,7 +112,6 @@ class InodeLayer():
                 print("\noffset is out of bound: Operation not Permitted\n")
                 return -1
 
-        # reading the first block with offset
         data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index])
         file_index += 1
         data_array = []
@@ -131,7 +127,6 @@ class InodeLayer():
 
         data_array.append(data_read[block_index:x])
 
-        # reading the rest of the blocks
         while(length):
             file_index += 1
             x = length if config.BLOCK_SIZE > length else config.BLOCK_SIZE
@@ -146,8 +141,8 @@ class InodeLayer():
 
     #IMPLEMENTS THE READ FUNCTION 
     def copy(self, inode): 
+
         newInodeObj = test.new_inode(0)
-        # copying blocks to make a deep copy
         for i in range(0, len(inode.blk_numbers)):
             if (inode.blk_numbers[i] == -1):
                 break
@@ -181,17 +176,16 @@ if __name__ == "__main__":
     test = InodeLayer()
     inodeObj = test.new_inode(0)
     dirInodeObj =  test.new_inode(1)
-    # first write
+
     print("\nWriting data to the inode data block...")
     inodeObj = test.write(inodeObj, 0, "Hello World")
 
     time.sleep(1)
-    # second write
+    
     print("\nWriting data to the inode data block...")
     inodeObj = test.write(inodeObj, 12, "! This is great")
     test.printAttr(inodeObj)
 
-    # read operation
     print("\nReading data to the inode data block...")
     _ , data_read = test.read(inodeObj, 0, 16)
     print ("read result : " + data_read)
