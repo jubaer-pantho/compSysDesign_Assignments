@@ -5,31 +5,6 @@ MemoryInterface.Initialize_My_FileSystem()
 #HANDLE OF BLOCK LAYER
 interface = BlockLayer.BlockLayer()
 
-
-
-class Operations():
-    def __init__(self):
-        self.map = []
-
-    #WRITES STRING1
-    def write(self, string):
-        data_array = []
-        # verify that string is of type string
-        for i in range(0, len(string), config.BLOCK_SIZE):
-            # divide up the string into chunks of length BLOCK_SIZE
-            data_array.append(string[i : i + config.BLOCK_SIZE])
-        self.__write_to_filesystem(data_array)
-
-
-    #READS THE STRING
-    def read(self):
-        data = []
-        for i in range(len(self.map)):
-            # index through block numbers in map to get data blocks
-            data.append(interface.BLOCK_NUMBER_TO_DATA_BLOCK(self.map[i]))
-        print( "".join(data))
-        return "".join(data)
-
 class InodeLayer():
 
     #PLEASE DO NOT MODIFY THIS
@@ -61,8 +36,6 @@ class InodeLayer():
             interface.free_data_block(inode.blk_numbers[i])
             inode.blk_numbers[i] = -1
 
-
-
     def __write_to_filesystem_offset(self, inode, offset, data_array):
         flag = 0
         index = offset / config.BLOCK_SIZE
@@ -81,7 +54,6 @@ class InodeLayer():
 
     #IMPLEMENTS WRITE FUNCTIONALITY
     def write(self, inode, offset, data):
-        print("Writing data to the inode data block...")
         if inode.type == 1:
             print("\nInode is a directory: Operation not Permitted\n")
             return -1
@@ -162,13 +134,12 @@ class InodeLayer():
             length -= x
 
         inode.time_accessed = str(datetime.datetime.now())[:19]
-        #print("".join(data_array))
         return inode, "".join(data_array)
 
 
     #IMPLEMENTS THE READ FUNCTION 
     def copy(self, inode): 
-        '''WRITE   YOUR CODE HERE '''
+
         newInodeObj = test.new_inode(0)
         for i in range(0, len(inode.blk_numbers)):
             if (inode.blk_numbers[i] == -1):
@@ -189,9 +160,9 @@ class InodeLayer():
     def status(self):
         print(MemoryInterface.status())
 
-# temp debug function
+# debug print function
     def printAttr(self, inode):
-        print("printing blk numbers: ", inode.blk_numbers)
+        print("\nprinting blk numbers: ", inode.blk_numbers)
         print("time created: ", inode.time_created)
         print("time modified: ", inode.time_modified)
         print("time accessed: ", inode.time_accessed)
@@ -199,25 +170,27 @@ class InodeLayer():
         print("inode links: ", inode.links)
 
 if __name__ == "__main__":
-#    if len(sys.argv) < 3:
-#        print("Usage: python HW1.py <string1> <string2>")
-#        exit(0)
+
     test = InodeLayer()
     inodeObj = test.new_inode(0)
     dirInodeObj =  test.new_inode(1)
-    test.printAttr(inodeObj)
-    time.sleep(2)
-    inodeObj = test.write(inodeObj, 0, "Hello World")
-    test.printAttr(inodeObj)
 
-    time.sleep(2)
+    print("\nWriting data to the inode data block...")
+    inodeObj = test.write(inodeObj, 0, "Hello World")
+
+    time.sleep(1)
+    
+    print("\nWriting data to the inode data block...")
     inodeObj = test.write(inodeObj, 12, "! This is great")
     test.printAttr(inodeObj)
-    _ , data_read = test.read(inodeObj, 2, 6)
 
+    print("\nReading data to the inode data block...")
+    _ , data_read = test.read(inodeObj, 0, 16)
+    print ("read result : " + data_read)
+
+    print("\ncopying data to the new file (deep copy)...")
     copyObj = test.copy(inodeObj)
 
     test.printAttr(copyObj)
-    print(data_read)
 
     test.status()
