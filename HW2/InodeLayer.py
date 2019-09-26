@@ -59,7 +59,7 @@ class InodeLayer():
     #IMPLEMENTS WRITE FUNCTIONALITY
     def write(self, inode, offset, data):
         if inode.type == 1:
-            print("\nInode is a directory: Operation not Permitted\n")
+            print("Inode is a directory: Operation not Permitted")
             return -1
 
         # the if condition will be only executed if the file size is 0
@@ -81,7 +81,7 @@ class InodeLayer():
             block_index = offset % config.BLOCK_SIZE
 
             if (block_data == '' or inode.blk_numbers[file_index] == -1):
-                print("\noffset is out of bound: Operation not Permitted\n")
+                print("offset is out of bound: Operation not Permitted")
                 return -1
 
 
@@ -102,9 +102,8 @@ class InodeLayer():
 
     #IMPLEMENTS THE READ FUNCTION 
     def read(self, inode, offset, length): 
-        '''WRITE   YOUR CODE HERE '''
         if inode.type == 1:
-            print("\nInode is a directory: Operation not Permitted\n")
+            print("Inode is a directory: Operation not Permitted")
             return -1
 
         block_data = self.INODE_TO_BLOCK(inode, offset)
@@ -112,12 +111,11 @@ class InodeLayer():
         block_index = offset % config.BLOCK_SIZE
 
         if (block_data == '' or inode.blk_numbers[file_index] == -1):
-                print("\noffset is out of bound: Operation not Permitted\n")
+                print("offset is out of bound: Operation not Permitted")
                 return -1
 
         # reading the first block with offset
-        data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index])
-        file_index += 1
+        data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index]) 
         data_array = []
 
         x = config.BLOCK_SIZE - block_index
@@ -131,11 +129,13 @@ class InodeLayer():
 
         data_array.append(data_read[block_index:x])
 
-        # reading the rest of the blocks
+        #reading the rest of the blocks
         while(length):
             file_index += 1
             x = length if config.BLOCK_SIZE > length else config.BLOCK_SIZE
-            
+            if (inode.blk_numbers[file_index] == -1):
+                print("Length goes beyond allocated blocks")
+                return -1
             data_read = interface.BLOCK_NUMBER_TO_DATA_BLOCK(inode.blk_numbers[file_index])
             data_array.append(data_read[:x])
             length -= x
@@ -169,7 +169,7 @@ class InodeLayer():
 
 # debug print function
     def printAttr(self, inode):
-        print("\nprinting blk numbers: ", inode.blk_numbers)
+        print("printing blk numbers: ", inode.blk_numbers)
         print("time created: ", inode.time_created)
         print("time modified: ", inode.time_modified)
         print("time accessed: ", inode.time_accessed)
@@ -180,25 +180,70 @@ if __name__ == "__main__":
 
     test = InodeLayer()
     inodeObj = test.new_inode(0)
+
+    print ("\nTEST 0:\n")
     dirInodeObj =  test.new_inode(1)
-    # first write
-    print("\nWriting data to the inode data block...")
-    inodeObj = test.write(inodeObj, 0, "Hello World")
+    ret = test.read(dirInodeObj, 0, 8)
+    if (ret == -1):
+        print("read  attempt to inode that is not file: PASSED")
+
+
+    print ("\nTEST 1:\n")
+    ret = test.write(dirInodeObj, 0, "")
+    ret = test.read(dirInodeObj, 0, 8)
+    if (ret == -1):
+        print("write attempt to inode that is not file: PASSED")
+
+     
+    print ("\nTEST 2:\n")
+    inodeObj = test.write(inodeObj, 0, "01234567") 
+    _ , data_read = test.read(inodeObj, 0, 8)
+    print ("write initial string to file - result: " + data_read)
+
 
     time.sleep(1)
-    # second write
-    print("\nWriting data to the inode data block...")
-    inodeObj = test.write(inodeObj, 12, "! This is great")
-    test.printAttr(inodeObj)
-
-    # read operation
-    print("\nReading data to the inode data block...")
-    _ , data_read = test.read(inodeObj, 0, 16)
-    print ("read result : " + data_read)
-
-    print("\ncopying data to the new file (deep copy)...")
+    print ("\nTEST 3:\n")
     copyObj = test.copy(inodeObj)
+    _ , data_read = test.read(copyObj, 0, 8)
+    print ("copy of file - result: " + data_read)
 
-    test.printAttr(copyObj)
+
+    print ("\nTEST 4:\n")
+    _ , data_read = test.read(inodeObj, 2, 2)
+    print ("read file at an offset - result: " + data_read)
+
+
+    print ("\nTEST 5:\n")
+    inodeObj = test.write(inodeObj, 1, "writehere")
+    _ , data_read = test.read(inodeObj, 0, 10)
+    print ("writing to middle of file - result: " + data_read)
+
+    print ("\nTEST 6:\n")
+    ret = test.write(inodeObj, 12, "beyond") 
+    ret = test.read(inodeObj, 0, 16)
+    if (ret == -1):
+        print("write attempt beyond file size: PASSED")
+    
+    print ("\nTEST 7:\n")
+    ret = test.read(inodeObj, offset=12, length=3)
+    if (ret == -1):
+        print("read attempt beyond file size: PASSED")
+
+    print ("\nTEST 8:\n")
+    inodeObj = test.write(inode=inodeObj, offset=0, data="reset\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00")
+    _ , data_read = test.read(inodeObj, 0, 5)
+    print ("write reset to the file at 0 - result: " + data_read)
+
+    print ("\nTEST 9:\n")
+    inodeObj = test.write(inode=inodeObj, offset=5, data=" append")
+    _ , data_read = test.read(inode=inodeObj, offset=0, length=12)
+    print ("write append to end of file - result: " + data_read)
+
+    print ("\nTEST 10:\n")
+    inodeObj = test.write(inode=inodeObj, offset=0, data="0000    0002    0004    0006    ")
+    _ , data_read = test.read(inode=inodeObj, offset=0, length=16)
+    print ("(truncate) System Calls in Test - result: " + data_read)
+
+    print("\n\n")
 
     test.status()

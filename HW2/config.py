@@ -3,8 +3,8 @@
 #Min size of file name is 5
 
 
-TOTAL_NO_OF_BLOCKS = 1024
-BLOCK_SIZE = 512    # 16 . Try 16 to see the result on different blocks.
-MAX_NUM_INODES = 16
+TOTAL_NO_OF_BLOCKS = 128000 #1024
+BLOCK_SIZE = 4 # 512    # 16 . Try 16 to see the result on different blocks.
+MAX_NUM_INODES = 32 # 16
 INODE_SIZE = 128
 MAX_FILE_NAME_SIZE = 8
