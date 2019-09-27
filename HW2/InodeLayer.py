@@ -146,7 +146,7 @@ class InodeLayer():
 
     #IMPLEMENTS THE READ FUNCTION 
     def copy(self, inode): 
-        newInodeObj = test.new_inode(0)
+        newInodeObj = self.new_inode(0)
         # copying blocks to make a deep copy
         for i in range(0, len(inode.blk_numbers)):
             if (inode.blk_numbers[i] == -1):

@@ -141,7 +141,7 @@ class InodeLayer():
             length -= x
 
         inode.time_accessed = str(datetime.datetime.now())[:19]
-        return inode, "".join(data_array)
+        return "".join(data_array)
 
 
 
