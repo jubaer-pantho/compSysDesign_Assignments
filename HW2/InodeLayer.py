@@ -41,6 +41,11 @@ class InodeLayer():
         flag = 0
         index = offset / config.BLOCK_SIZE
         for i in range(len(data_array)):
+
+            if (index >= len(inode.blk_numbers)):
+                print("\nWrite size too big. Truncated\n")
+                break
+
             if (inode.blk_numbers[index] != -1 and flag == 0):
                 interface.update_data_block(inode.blk_numbers[index], data_array[i])
                 index += 1
@@ -48,9 +53,6 @@ class InodeLayer():
                 flag = 1
                 valid_block_number = interface.get_valid_data_block()
                 interface.update_data_block(valid_block_number, data_array[i])
-                if (index >= len(inode.blk_numbers)):
-                    print("\nWrite size too big: Operation not Permitted\n")
-                    return
                 inode.blk_numbers[index] = valid_block_number
                 inode.size += 1
                 index += 1
