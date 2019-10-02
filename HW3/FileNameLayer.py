@@ -57,13 +57,25 @@ class FileNameLayer():
     #IMPLEMENTS READ
     def read(self, path, inode_number_cwd, offset, length):
         '''WRITE YOUR CODE HERE'''
+        parent_inode_number = self.LOOKUP(path, inode_number_cwd)
+        parent_inode = interface.INODE_NUMBER_TO_INODE(parent_inode_number)
+        file_name = path.split('/')
+        file_inode_number = parent_inode.directory[file_name[-1]]
+        return interface.read(file_inode_number, offset, length, parent_inode_number)
 
     
     #IMPLEMENTS WRITE
     def write(self, path, inode_number_cwd, offset, data):
         '''WRITE YOUR CODE HERE'''
-        print("Yes I am here to test")
-        interface.write(0, 0, "test", "test")
+        parent_inode_number = self.LOOKUP(path, inode_number_cwd)
+        #parent_inode = interface.INODE_NUMBER_TO_INODE(parent_inode_number)
+        #file_name = path.split('/')
+        #file_inode_number = parent_inode.directory[file_name[-1]]
+        #print("write-file_inode_number: ", file_inode_number)
+        path_name = path.split('/')
+        child_name = path_name[-1]
+        child_inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(child_name, parent_inode_number)
+        interface.write(child_inode_number, offset, data, parent_inode_number)
 
     #HARDLINK
     def link(self, old_path, new_path, inode_number_cwd):

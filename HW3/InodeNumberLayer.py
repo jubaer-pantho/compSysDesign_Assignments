@@ -72,12 +72,22 @@ class InodeNumberLayer():
     #IMPLEMENTS WRITE FUNCTIONALITY
     def write(self, inode_number, offset, data, parent_inode_number):
         '''WRITE YOUR CODE HERE'''
-        print("yes I am here to test code.")
-        print(inode_number)
-        print(offset)
-        print(data)
+        parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
+        inode = self.INODE_NUMBER_TO_INODE(inode_number)
+        inode = interface.write(inode, offset, data)
+        self.update_inode_table(inode, inode_number)
+        #print("offset: ", offset)
+        #print("write-file_inode_number: ", inode_number)
+        #print("data: ", data)
+        #interface.printAttr(inode)
+        #print("\n\n\n")
         
 
     #IMPLEMENTS READ FUNCTIONALITY
     def read(self, inode_number, offset, length, parent_inode_number):
         '''WRITE YOUR CODE HERE'''
+        parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
+        return self.INODE_NUMBER_TO_BLOCK(inode_number, offset, length)
+
+
+

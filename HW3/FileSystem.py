@@ -56,11 +56,12 @@ if __name__ == '__main__':
     print("Examples:")
     my_object.mkdir("/A")
     #my_object.status()
-    my_object.mkdir("/B")
+    #my_object.mkdir("/B")
     #my_object.status()
     my_object.create("/A/1.txt") #, as A is already there we can crete file in A
     #my_object.status()
-    my_object.write("/A/1.txt", "POCSD", 0)#offset), as 1.txt is already created now, we can write to it.
+    my_object.write("/A/1.txt", "Pantho", 0)#offset), as 1.txt is already created now, we can write to it.
+    my_object.read("/A/1.txt", 0, 6)
     #my_object.status()
     '''my_object.mv("/A/1.txt", "/B")
     my_object.status()

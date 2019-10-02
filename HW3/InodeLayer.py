@@ -65,7 +65,7 @@ class InodeLayer():
         # the if condition will be only executed if the file size is 0
         # for the first time
         if inode.size == 0 and offset == 0:
-            print("Initial write to the inode block")
+            #print("Initial write to the inode block")
 
             data_array = []
             for i in range(0, len(data), config.BLOCK_SIZE):
@@ -143,6 +143,13 @@ class InodeLayer():
         inode.time_accessed = str(datetime.datetime.now())[:19]
         return "".join(data_array)
 
-
+# debug print function
+    def printAttr(self, inode):
+        print("printing blk numbers: ", inode.blk_numbers)
+        print("time created: ", inode.time_created)
+        print("time modified: ", inode.time_modified)
+        print("time accessed: ", inode.time_accessed)
+        print("inode size: ", inode.size)
+        print("inode links: ", inode.links)
 
 
