@@ -77,8 +77,8 @@ class InodeNumberLayer():
         inode = self.INODE_NUMBER_TO_INODE(inode_number)
         parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
 
-        if inode.type == 0:
-            #Handling file
+        if (inode.type == 0) or (inode.links == 3):
+            #Handling file or folder for move operation
             inode.links = inode.links - 1
             parent_inode.directory.pop(filename)
             if inode.links == 0:
