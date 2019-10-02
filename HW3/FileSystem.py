@@ -64,7 +64,8 @@ if __name__ == '__main__':
     #my_object.status()
     my_object.mv("/A/1.txt", "/B")
     my_object.read("/B/1.txt", 0, 6)
-    my_object.status()
+    #my_object.status()
     my_object.rm("/B/1.txt")
+    my_object.rm("/B") 
     my_object.status()
 

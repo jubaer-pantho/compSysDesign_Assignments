@@ -67,9 +67,6 @@ class InodeNumberLayer():
         inode.links = inode.links + 1
         parent_inode.directory[hardlink_name] = file_inode_number
         self.update_inode_table(inode, file_inode_number)
-
-        #interface.printAttr(inode)
-        #interface.printAttr(parent_inode)
         self.update_inode_table(parent_inode, hardlink_parent_inode_number)
 
 
@@ -78,14 +75,35 @@ class InodeNumberLayer():
     def unlink(self, inode_number, parent_inode_number, filename):
         '''WRITE YOUR CODE HERE'''
         inode = self.INODE_NUMBER_TO_INODE(inode_number)
-        inode.links = inode.links - 1
         parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
-        parent_inode.directory.pop(filename)
-        self.update_inode_table(inode, inode_number)
-        self.update_inode_table(parent_inode, parent_inode_number)
 
-
-
+        if inode.type == 0:
+            #Handling file
+            inode.links = inode.links - 1
+            parent_inode.directory.pop(filename)
+            if inode.links == 0:
+                for i in range(len(inode.blk_numbers)):
+                    if(inode.blk_numbers[i] == -1):
+                        break
+                    interface.free_data_block(inode, i)
+                self.update_inode_table(False, inode_number)
+            else:
+                self.update_inode_table(inode, inode_number)
+            self.update_inode_table(parent_inode, parent_inode_number)
+        else:
+            #Handling directory
+            if (not inode.directory):   #Directory Empty
+                inode.links = 0
+                parent_inode.directory.pop(filename)
+                if inode_number != 0:
+                    self.update_inode_table(False, inode_number)
+                    self.update_inode_table(parent_inode, parent_inode_number)
+                else:
+                    print("Error: Cannot Delete root directoy")
+                    return -1
+            else:
+                print("Error: Folder not Empty")
+                return -1
 
 
     #IMPLEMENTS WRITE FUNCTIONALITY
@@ -101,8 +119,6 @@ class InodeNumberLayer():
 
     #IMPLEMENTS READ FUNCTIONALITY
     def read(self, inode_number, offset, length, parent_inode_number):
-        '''WRITE YOUR CODE HERE'''
-        parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
         return self.INODE_NUMBER_TO_BLOCK(inode_number, offset, length)
 
 
