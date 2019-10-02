@@ -146,6 +146,7 @@ class InodeLayer():
 # debug print function
     def printAttr(self, inode):
         print("printing blk numbers: ", inode.blk_numbers)
+        print("directory: ", inode.directory)
         print("time created: ", inode.time_created)
         print("time modified: ", inode.time_modified)
         print("time accessed: ", inode.time_accessed)

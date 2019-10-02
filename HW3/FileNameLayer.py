@@ -58,20 +58,16 @@ class FileNameLayer():
     def read(self, path, inode_number_cwd, offset, length):
         '''WRITE YOUR CODE HERE'''
         parent_inode_number = self.LOOKUP(path, inode_number_cwd)
-        parent_inode = interface.INODE_NUMBER_TO_INODE(parent_inode_number)
-        file_name = path.split('/')
-        file_inode_number = parent_inode.directory[file_name[-1]]
-        return interface.read(file_inode_number, offset, length, parent_inode_number)
+        path_name = path.split('/')
+        child_name = path_name[-1]
+        child_inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(child_name, parent_inode_number)
+        return interface.read(child_inode_number, offset, length, parent_inode_number)
 
     
     #IMPLEMENTS WRITE
     def write(self, path, inode_number_cwd, offset, data):
         '''WRITE YOUR CODE HERE'''
         parent_inode_number = self.LOOKUP(path, inode_number_cwd)
-        #parent_inode = interface.INODE_NUMBER_TO_INODE(parent_inode_number)
-        #file_name = path.split('/')
-        #file_inode_number = parent_inode.directory[file_name[-1]]
-        #print("write-file_inode_number: ", file_inode_number)
         path_name = path.split('/')
         child_name = path_name[-1]
         child_inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(child_name, parent_inode_number)
@@ -80,6 +76,19 @@ class FileNameLayer():
     #HARDLINK
     def link(self, old_path, new_path, inode_number_cwd):
         '''WRITE YOUR CODE HERE'''
+        old_parent_inode_number = self.LOOKUP(old_path, inode_number_cwd)
+        new_grandparent_inode_number = self.LOOKUP(new_path, inode_number_cwd)
+        path_name = old_path.split('/')
+        file_name = path_name[-1]
+
+        new_path_name = new_path.split('/')
+        new_parent_name = new_path_name[-1]
+        new_parent_inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(new_parent_name, new_grandparent_inode_number)
+
+        file_inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(file_name, old_parent_inode_number)
+        interface.link(file_inode_number, file_name, new_parent_inode_number)
+
+
 
 
     #REMOVES THE FILE/DIRECTORY
@@ -88,10 +97,18 @@ class FileNameLayer():
             print("Error FileNameLayer: Cannot delete root directory!")
             return -1
         '''WRITE YOUR CODE HERE'''
+        parent_inode_number = self.LOOKUP(path, inode_number_cwd)
+        path_name = path.split('/')
+        file_name = path_name[-1]
+        inode_number = self.CHILD_INODE_NUMBER_FROM_PARENT_INODE_NUMBER(file_name, parent_inode_number)
+        interface.unlink(inode_number, parent_inode_number, file_name)
 
 
     #MOVE
     def mv(self, old_path, new_path, inode_number_cwd):
         '''WRITE YOUR CODE HERE'''
+        self.link(old_path, new_path, inode_number_cwd)
+        self.unlink(old_path, inode_number_cwd)
+        
 
     

@@ -62,11 +62,30 @@ class InodeNumberLayer():
     #LINKS THE INODE
     def link(self, file_inode_number, hardlink_name, hardlink_parent_inode_number):
         '''WRITE YOUR CODE HERE'''
+        inode = self.INODE_NUMBER_TO_INODE(file_inode_number)
+        parent_inode = self.INODE_NUMBER_TO_INODE(hardlink_parent_inode_number)
+        inode.links = inode.links + 1
+        parent_inode.directory[hardlink_name] = file_inode_number
+        self.update_inode_table(inode, file_inode_number)
+
+        #interface.printAttr(inode)
+        #interface.printAttr(parent_inode)
+        self.update_inode_table(parent_inode, hardlink_parent_inode_number)
+
 
 
     #REMOVES THE INODE ENTRY FROM INODE TABLE
     def unlink(self, inode_number, parent_inode_number, filename):
         '''WRITE YOUR CODE HERE'''
+        inode = self.INODE_NUMBER_TO_INODE(inode_number)
+        inode.links = inode.links - 1
+        parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
+        parent_inode.directory.pop(filename)
+        self.update_inode_table(inode, inode_number)
+        self.update_inode_table(parent_inode, parent_inode_number)
+
+
+
 
 
     #IMPLEMENTS WRITE FUNCTIONALITY
@@ -74,14 +93,11 @@ class InodeNumberLayer():
         '''WRITE YOUR CODE HERE'''
         parent_inode = self.INODE_NUMBER_TO_INODE(parent_inode_number)
         inode = self.INODE_NUMBER_TO_INODE(inode_number)
-        inode = interface.write(inode, offset, data)
-        self.update_inode_table(inode, inode_number)
-        #print("offset: ", offset)
-        #print("write-file_inode_number: ", inode_number)
-        #print("data: ", data)
-        #interface.printAttr(inode)
-        #print("\n\n\n")
-        
+        updated_inode = interface.write(inode, offset, data)
+        if updated_inode == -1:
+            print("Error: Failed to write on InodeLayer")
+        else:
+            self.update_inode_table(updated_inode, inode_number)  
 
     #IMPLEMENTS READ FUNCTIONALITY
     def read(self, inode_number, offset, length, parent_inode_number):
