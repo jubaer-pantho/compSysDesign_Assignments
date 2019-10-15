@@ -48,10 +48,11 @@ class FileSystemOperations():
 if __name__ == '__main__':
     #DO NOT MODIFY THIS
     Initialize_My_FileSystem()
-    my_object = FileSystemOperations()
+#    my_object = FileSystemOperations()
     #my_object.status()
     #YOU MAY WRITE YOUR CODE AFTER HERE
 
+'''
     
     my_object.mkdir("/A")
     #my_object.status()
@@ -69,4 +70,4 @@ if __name__ == '__main__':
     my_object.mv("/B", "/A")
     my_object.rm("/A/B/1.txt") 
     my_object.status()
-
+'''
