@@ -19,9 +19,9 @@ def Initialize():
 ''' WRITE CODE HERE FOR REST OF FUNCTIONS'''
 
 def inode_number_to_inode(inode_number):
-    inode_number = pickle.loads(inode_number)
+    inode_number = pickle.loads(inode_number) #unmarshalling data
     retVal = filesystem.inode_number_to_inode(inode_number)
-    retVal = pickle.dumps(retVal)
+    retVal = pickle.dumps(retVal) # marshalling response. Same for rest of the code
     return retVal
 
 
@@ -53,6 +53,7 @@ def update_data_block(block_number, block_data):
     block_number = pickle.loads(block_number)
     block_data = pickle.loads(block_data)
     filesystem.update_data_block(block_number, block_data)
+    #returning acknowledgement to finish the command
     ack = pickle.dumps(1)
     return ack
 
@@ -62,6 +63,7 @@ def update_inode_table(inode, inode_number):
     inode = pickle.loads(inode)
     inode_number = pickle.loads(inode_number)
     filesystem.update_inode_table(inode, inode_number)
+    #returning acknowledgement to finish the command
     ack = pickle.dumps(1)
     return ack
 

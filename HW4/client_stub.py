@@ -19,6 +19,12 @@ class client_stub():
 
 
     ''' WRITE CODE HERE '''
+    # These APIs are registered with the identical name one the server stub
+    # please see the comments on the server stub to check their functionality
+    # pickle.dump() is used to marshal arguments
+    # pickle.load() is used to unmarshar return value from the server.
+    # To avoid termination please replace the quit() API with quit() 
+    
     def inode_number_to_inode(self, inode_number):
         try :
             inode_number = pickle.dumps(inode_number)  
@@ -28,7 +34,7 @@ class client_stub():
 
         except Exception as err :
             print("error message: inode_number_to_inode failed")
-            return -1
+            quit()
 
     def get_data_block(self, block_number):
         try :
@@ -38,7 +44,7 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: get_data_block failed")
-            return -1
+            quit()
 
     def get_valid_data_block(self):
         try :
@@ -47,7 +53,7 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: get_valid_data_block failed")
-            return -1
+            quit()
 
 
     def free_data_block(self, block_number):
@@ -57,7 +63,7 @@ class client_stub():
             retVal = pickle.loads(retVal)  
         except Exception as err :
             print("error message: free_data_block failed")
-            return -1
+            quit()
 
     def update_data_block(self, block_number, block_data):
         try :
@@ -67,7 +73,7 @@ class client_stub():
             retVal = pickle.loads(retVal)  
         except Exception as err :
             print("error message: update_data_block failed")
-            return -1
+            quit()
 
     def update_inode_table(self, inode, inode_number):
         try :
@@ -77,7 +83,7 @@ class client_stub():
             retVal = pickle.loads(retVal)
         except Exception as err :
             print("error message:update_inode_table failed")
-            return -1
+            quit()
 
     def status(self):
         try :
@@ -86,5 +92,5 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: status failed")
-            return -1
+            quit()
 
