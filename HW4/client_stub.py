@@ -14,7 +14,7 @@ class client_stub():
         try :
             self.proxy.Initialize()
         except Exception as err :
-            # print error message
+            print("error message: Initialization failed")
             quit()
 
 
@@ -28,7 +28,7 @@ class client_stub():
 
         except Exception as err :
             print("error message: inode_number_to_inode failed")
-            quit()
+            return -1
 
     def get_data_block(self, block_number):
         try :
@@ -38,7 +38,7 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: get_data_block failed")
-            quit()
+            return -1
 
     def get_valid_data_block(self):
         try :
@@ -47,7 +47,7 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: get_valid_data_block failed")
-            quit()
+            return -1
 
 
     def free_data_block(self, block_number):
@@ -57,7 +57,7 @@ class client_stub():
             retVal = pickle.loads(retVal)  
         except Exception as err :
             print("error message: free_data_block failed")
-            quit()
+            return -1
 
     def update_data_block(self, block_number, block_data):
         try :
@@ -67,7 +67,7 @@ class client_stub():
             retVal = pickle.loads(retVal)  
         except Exception as err :
             print("error message: update_data_block failed")
-            quit()
+            return -1
 
     def update_inode_table(self, inode, inode_number):
         try :
@@ -77,7 +77,7 @@ class client_stub():
             retVal = pickle.loads(retVal)
         except Exception as err :
             print("error message:update_inode_table failed")
-            quit()
+            return -1
 
     def status(self):
         try :
@@ -86,5 +86,5 @@ class client_stub():
             return retVal
         except Exception as err :
             print("error message: status failed")
-            quit()
+            return -1
 
