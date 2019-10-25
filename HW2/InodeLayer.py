@@ -36,16 +36,15 @@ class InodeLayer():
             interface.free_data_block(inode.blk_numbers[i])
             inode.blk_numbers[i] = -1
 
+
     # helper function to write data to the blocks
     def __write_to_filesystem_offset(self, inode, offset, data_array):
         flag = 0
         index = offset / config.BLOCK_SIZE
         for i in range(len(data_array)):
-
             if (index >= len(inode.blk_numbers)):
-                print("\nWrite size too big. Truncated\n")
-                break
-
+                print("\nWrite size too big: Operation not Permitted\n")
+                return
             if (inode.blk_numbers[index] != -1 and flag == 0):
                 interface.update_data_block(inode.blk_numbers[index], data_array[i])
                 index += 1
@@ -57,9 +56,9 @@ class InodeLayer():
                 inode.size += 1
                 index += 1
 
-
     #IMPLEMENTS WRITE FUNCTIONALITY
     def write(self, inode, offset, data):
+        #PLACE CODE FROM HW2 HERE
         if inode.type == 1:
             print("Inode is a directory: Operation not Permitted")
             return -1
@@ -67,8 +66,6 @@ class InodeLayer():
         # the if condition will be only executed if the file size is 0
         # for the first time
         if inode.size == 0 and offset == 0:
-            print("Initial write to the inode block")
-
             data_array = []
             for i in range(0, len(data), config.BLOCK_SIZE):
                 data_array.append(data[i : i + config.BLOCK_SIZE])
@@ -101,9 +98,9 @@ class InodeLayer():
         inode.time_modified = str(datetime.datetime.now())[:19]
         return inode
 
-
     #IMPLEMENTS THE READ FUNCTION 
     def read(self, inode, offset, length): 
+        #PLACE CODE FROM HW2 HERE
         if inode.type == 1:
             print("Inode is a directory: Operation not Permitted")
             return -1
